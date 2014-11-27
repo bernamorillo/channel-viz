@@ -159,8 +159,8 @@
 										},
 										series: [
 											{
-											name=Ebro25,
-											data:[{x:1,y:4},{x:3,y:6})],
+											name="Ebro25",
+											data:[{x:1,y:4},{x:3,y:6}],
 											color:831616,
 											},
 											]											]

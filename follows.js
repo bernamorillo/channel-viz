@@ -1,448 +1,106 @@
-(function ( $ ){
+<!doctype>
+<link type="text/css" rel="stylesheet" href="../rickshaw.min.css">
+<script src="../vendor/d3.min.js"></script>
+<script src="../vendor/d3.layout.min.js"></script>
+<script src="../rickshaw.min.js"></script>
 
-	var defaultKey		= 'OMCzabPFgxwth38NaNLqwgpOPSfj0CIllfjzVynlhgj8FDeE', // Unique master Xively API key to be used as a default
-		defaultFeeds	= [3368415], // Comma separated array of Xively Feed ID numbers
-		applicationName	= 'SANTA ENGRACIA XIVELY', // Replaces Xively logo in the header
-		dataDuration	= '1day', // Default duration of data to be displayed // ref: https://xively.com/dev/docs/api/data/read/historical_data/
-		dataInterval	= 300, // Default interval for data to be displayed (in seconds)
-		dataColor		= 'f41d1d', // CSS HEX value of color to represent data (omit leading #)
-		hideForm		= 0; // To hide input form use value of 1, otherwise set to 0
+<style>
+#chart_container {
+        display: inline-block;
+        font-family: Arial, Helvetica, sans-serif;
+}
+#chart {
+        float: left;
+}
+#legend {
+        float: left;
+        margin-left: 15px;
+}
+#offset_form {
+        float: left;
+        margin: 2em 0 0 15px;
+        font-size: 13px;
+}
+#y_axis {
+        float: left;
+        width: 40px;
+}
+</style>
 
-// Function Declarations
+<div id="chart_container">
+        <div id="y_axis"></div>
+        <div id="chart"></div>
+        <div id="legend"></div>
+        <form id="offset_form" class="toggler">
+                <input type="radio" name="offset" id="lines" value="lines" checked>
+                <label class="lines" for="lines">lines</label><br>
+                <input type="radio" name="offset" id="stack" value="zero">
+                <label class="stack" for="stack">stack</label>
+        </form>
+</div>
 
-	// URL Parameters
-	function getParam(key) {
-	 	var value = location.hash.match(new RegExp(key+'=([^&]*)'));
-		if(value) {
-			return value[1];
-		} else {
-			return "";
-		}
-	}
+<script>
+var palette = new Rickshaw.Color.Palette();
 
-	// Graph Annotations
-	function addAnnotation(force) {
-		if (messages.length > 0 && (force || Math.random() >= 0.95)) {
-			annotator.add(seriesData[2][seriesData[2].length-1].x, messages.shift());
-		}
-	}
+var graph = new Rickshaw.Graph( {
+        element: document.querySelector("#chart"),
+        width: 540,
+        height: 240,
+        renderer: 'line',
+        series: [
+                {
+                        name: "Northeast",
+                        data: [ { x: -1893456000, y: 25868573 }, { x: -1577923200, y: 29662053 }, { x: -1262304000, y: 34427091 }, { x: -946771200, y: 35976777 }, { x: -631152000, y: 39477986 }, { x: -315619200, y: 44677819 }, { x: 0, y: 49040703 }, { x: 315532800, y: 49135283 }, { x: 631152000, y: 50809229 }, { x: 946684800, y: 53594378 }, { x: 1262304000, y: 55317240 } ],
+                        color: palette.color()
+                },
+                {
+                        name: "Midwest",
+                        data: [ { x: -1893456000, y: 29888542 }, { x: -1577923200, y: 34019792 }, { x: -1262304000, y: 38594100 }, { x: -946771200, y: 40143332 }, { x: -631152000, y: 44460762 }, { x: -315619200, y: 51619139 }, { x: 0, y: 56571663 }, { x: 315532800, y: 58865670 }, { x: 631152000, y: 59668632 }, { x: 946684800, y: 64392776 }, { x: 1262304000, y: 66927001 } ],
+                        color: palette.color()
+                },
+                {
+                        name: "South",
+                        data: [ { x: -1893456000, y: 29389330 }, { x: -1577923200, y: 33125803 }, { x: -1262304000, y: 37857633 }, { x: -946771200, y: 41665901 }, { x: -631152000, y: 47197088 }, { x: -315619200, y: 54973113 }, { x: 0, y: 62795367 }, { x: 315532800, y: 75372362 }, { x: 631152000, y: 85445930 }, { x: 946684800, y: 100236820 }, { x: 1262304000, y: 114555744 } ],
+                        color: palette.color()
+                },
+                {
+                        name: "West",
+                        data: [ { x: -1893456000, y: 7082086 }, { x: -1577923200, y: 9213920 }, { x: -1262304000, y: 12323836 }, { x: -946771200, y: 14379119 }, { x: -631152000, y: 20189962 }, { x: -315619200, y: 28053104 }, { x: 0, y: 34804193 }, { x: 315532800, y: 43172490 }, { x: 631152000, y: 52786082 }, { x: 946684800, y: 63197932 }, { x: 1262304000, y: 71945553 } ],
+                        color: palette.color()
+                }
+        ]
+} );
 
-	// Add One (1) Day to Date Object
-	Date.prototype.addDays = function (d) {
-		if (d) {
-			var t = this.getTime();
-			t = t + (d * 86400000);
-			this.setTime(t);
-		}
-	};
+var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
 
-	// Subtract One (1) Day to Date Object
-	Date.prototype.subtractDays = function (d) {
-		if (d) {
-			var t = this.getTime();
-			t = t - (d * 86400000);
-			this.setTime(t);
-		}
-	};
+var y_axis = new Rickshaw.Graph.Axis.Y( {
+        graph: graph,
+        orientation: 'left',
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        element: document.getElementById('y_axis'),
+} );
 
-	// Parse Xively ISO Date Format to Date Object
-	Date.prototype.parseISO = function(iso){
-		var stamp= Date.parse(iso);
-		if(!stamp) throw iso +' Unknown date format';
-		return new Date(stamp);
-	}
+var legend = new Rickshaw.Graph.Legend( {
+        element: document.querySelector('#legend'),
+        graph: graph
+} );
 
-	// Set xively API Key
-	function setApiKey(key) {
-		xively.setKey(key);
-	}
+var offsetForm = document.getElementById('offset_form');
 
-	function updateFeeds(feedId, datastreamIds, duration, interval) {
-		xively.feed.get(feedId, function(feedData) {
-			if(feedData.datastreams) {
-				if(datastreamIds == '' || !datastreamIds) {
-					feedData.datastreams.forEach(function(datastream) {
-						datastreamIds += datastream.id + " ";
-					});
-				}
-				feedData.datastreams.forEach(function(datastream) {
-					var now = new Date();
-					var then = new Date();
-					var updated = new Date;
-					updated = updated.parseISO(datastream.at);
-					var diff = null;
-					if(duration == '6hours') diff = 21600000;
-					 if(duration == '1day') diff = 86400000;
-					 if(duration == '1week') diff = 604800000;
-					 if(duration == '1month') diff = 2628000000;
-					 if(duration == '90days') diff = 7884000000;
-					then.setTime(now.getTime() - diff);
-					if(updated.getTime() > then.getTime()) {
-						if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {
-							xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
+offsetForm.addEventListener('change', function(e) {
+        var offsetMode = e.target.value;
 
-								var series = [];
-								var points = [];
+        if (offsetMode == 'lines') {
+                graph.setRenderer('line');
+                graph.offset = 'zero';
+        } else {
+                graph.setRenderer('stack');
+                graph.offset = offsetMode;
+        }       
+        graph.render();
 
-								// Create Datastream UI
-								$('.datastream-' + datastream.id).empty();
-								$('.datastream-' + datastream.id).remove();
-								$('#feed-' + feedId + ' .datastream.hidden').clone().appendTo('#feed-' + feedId + ' .datastreams').addClass('datastream-' + datastream.id).removeClass('hidden');
+}, false);
 
-								// Check for Datastream Tags
-								var tagsHtml = '';
-								if(datastreamData.tags) {
-									tagsHtml = '<div style="font-size: 14px;"><span class="radius secondary label">' + datastreamData.tags.join('</span> <span class="radius secondary label">') + '</span></div>';
-								} else {
-									tagsHtml = '';
-								}
+graph.render();
 
-								// Fill Datastream UI with Data
-								$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .datastream-name').html(datastream.id);
-								$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .datastream-value').html(datastream.current_value);
-
-								// Include Datastream Unit (If Available)
-								if(datastream.unit) {
-									if(datastream.unit.symbol) {
-										$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .datastream-value').html(datastream.current_value + datastream.unit.symbol);
-									} else {
-										$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .datastream-value').html(datastream.current_value);
-									}
-								} else {
-									$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .datastream-value').html(datastream.current_value);
-								}
-								$('.datastream-' + datastream.id).removeClass('hidden');
-
-								// Historical Datapoints
-								if(datastreamData.datapoints) {
-
-									// Add Each Datapoint to Array
-									datastreamData.datapoints.forEach(function(datapoint) {
-										points.push({x: new Date(datapoint.at).getTime()/1000.0, y: parseFloat(datapoint.value)});
-									});
-
-									// Add Datapoints Array to Graph Series Array
-									series.push({
-										name: datastream.id,
-										data: points,
-										color: '#' + dataColor
-									});
-
-									// Initialize Graph DOM Element
-									$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .graph').attr('id', 'graph-' + feedId + '-' + datastream.id);
-
-						 			// Build Graph
-									var graph = new Rickshaw.Graph( {
-										element: document.querySelector('#graph-' + feedId + '-' + datastream.id),
-										width: 600,
-										height: 200,
-										renderer: 'line',
-										min: 0,
-										max: 40,
-										padding: {
-											top: 0.02,
-											right: 0.02,
-											bottom: 0.02,
-											left: 0.02
-										},
-										series: [
-											{
-											name="Ebro25",
-											data:[{x:1,y:4},{x:3,y:6}],
-											color:3ab642,
-											}
-											]											]
-									});
-
-									graph.render();
-
-									var ticksTreatment = 'glow';
-
-									// Define and Render X Axis (Time Values)
-									var xAxis = new Rickshaw.Graph.Axis.Time( {
-										graph: graph,
-										ticksTreatment: ticksTreatment
-									});
-									xAxis.render();
-
-									// Define and Render Y Axis (Datastream Values)
-									var yAxis = new Rickshaw.Graph.Axis.Y( {
-										graph: graph,
-										tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-										ticksTreatment: ticksTreatment
-									});
-									yAxis.render();
-
-									// Enable Datapoint Hover Values
-									var hoverDetail = new Rickshaw.Graph.HoverDetail({
-										graph: graph,
-										formatter: function(series, x, y) {
-											var swatch = '<span class="detail_swatch" style="background-color: ' + series.color + ' padding: 4px;"></span>';
-											var content = swatch + "&nbsp;&nbsp;" + parseFloat(y) + '&nbsp;&nbsp;<br>';
-											return content;
-										}
-									});
-
-									$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .slider').prop('id', 'slider-' + feedId + '-' + datastream.id);
-									var slider = new Rickshaw.Graph.RangeSlider({
-	            	   					graph: graph,
-	        	       					element: $('#slider-' + feedId + '-' + datastream.id)
-	               					});
-								} else {
-									$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .graphWrapper').addClass('hidden');
-								}
-							});
-						} else {
-							console.log('Datastream not requested! (' + datastream.id + ')');
-						}
-					} else {
-						$('#feed-' + feedId + ' .datastreams .datastream-' + datastream.id + ' .graphWrapper').html('<div class="alert alert-box no-info">Sorry, this datastream does not have any associated data.</div>');
-					}
-				});
-			}
-			$('#loadingData').foundation('reveal', 'close');
-		});
-	}
-
-	function setFeeds(feeds) {
-		$('#welcome').addClass('hidden');
-		feeds.forEach(function(id) {
-
-			var thisFeedId, thisFeedDatastreams;
-			if(id.indexOf('!') > 0) {
-				thisFeedId = id.substring(0, id.indexOf('!'));
-				thisFeedDatastreams = id.substring(id.indexOf('!')+1).split('!');
-			} else {
-				thisFeedId = id;
-			}
-			id = thisFeedId;
-
-			if($('#feed-' + id)) {
-				$('#feed-' + id).remove();
-			}
-			xively.feed.history(id, {  duration: "6hours", interval: 30 }, function (data) {
-				if(data.id == id) {
-					// Duplicate Example to Build Feed UI
-					$('#exampleFeed').clone().appendTo('#feeds').attr('id', 'feed-' + id).removeClass('hidden');
-
-					// ID
-					$('#feed-' + data.id + ' .title .value').html(data.title);
-
-					// Title
-					$('#feed-' + data.id + ' .id .value').html(data.id);
-
-					// Description
-					if(data.description) {
-						$('#feed-' + data.id + ' .description .value').html(data.description);
-					} else {
-						$('#feed-' + data.id + ' .description').addClass('hidden');
-					}
-
-					// Link
-					$('#feed-' + data.id + ' .link .value').html('<a href="https://xively.com/feeds/' + data.id + '/">View on Xively &raquo;</a>');
-
-					// Creator
-					var creator = /[^/]*$/.exec(data.creator)[0];
-					$('#feed-' + data.id + ' .creator .value').html('<a href="' + data.creator + '">' + creator + '</a>');
-
-					// Date Updated
-					$('#feed-' + data.id + ' .updated .value').html(data.updated);
-
-					// Tags
-					if(data.tags) {
-						$('#feed-' + data.id + ' .tags .value').html('<span class="radius secondary label">' + data.tags.join('</span> <span class="radius secondary label">') + '</span>');
-					} else {
-						$('#feed-' + data.id + ' .tags').addClass('hidden');
-					}
-
-					// Location
-					if(data.location) {
-						if(data.location.name || data.location.lat || data.location.ele || data.location.disposition) {
-
-							// Location Name
-							if(data.location.name) {
-								$('#feed-' + data.id + ' .location-name .value').html(data.location.name);
-							} else {
-								$('#feed-' + data.id + ' .location-name').addClass('hidden');
-							}
-
-							// Location Coordinates
-							if(data.location.lat && data.location.lon) {
-								$('#feed-' + data.id + ' .latitude .value').html(data.location.lat);
-								$('#feed-' + data.id + ' .longitude .value').html(data.location.lon);
-							} else {
-								$('#feed-' + data.id + ' .latitude').addClass('hidden');
-								$('#feed-' + data.id + ' .longitude').addClass('hidden');
-							}
-
-							// Location Elevation
-							if(data.location.ele) {
-								$('#feed-' + data.id + ' .elevation .value').html(data.location.ele);
-							} else {
-								$('#feed-' + data.id + ' .elevation').addClass('hidden');
-							}
-
-							// Location Disposition
-							if(data.location.disposition) {
-								$('#feed-' + data.id + ' .disposition .value').html(data.location.disposition);
-							} else {
-								$('#feed-' + data.id + ' .disposition').addClass('hidden');
-							}
-
-							// Location Map
-							if(data.location.lat && data.location.lon) {
-								$('#feed-' + data.id + ' .map .value').html('<a href="http://maps.google.com/maps?z=14&t=m&q=loc:' + data.location.lat + '+' + data.location.lon + '">View on Google Maps &raquo;</a>');
-							} else {
-								$('#feed-' + data.id + ' .map').addClass('hidden');
-							}
-						} else {
-							// Location Information Unavailable
-							$('#feed-' + data.id + ' .no-location').removeClass('hidden');
-								$('#feed-' + data.id + ' .location-name').addClass('hidden');
-								$('#feed-' + data.id + ' .latitude').addClass('hidden');
-								$('#feed-' + data.id + ' .longitude').addClass('hidden');
-								$('#feed-' + data.id + ' .elevation').addClass('hidden');
-								$('#feed-' + data.id + ' .disposition').addClass('hidden');
-								$('#feed-' + data.id + ' .map').addClass('hidden');
-						}
-					} else {
-						// Location Information Unavailable
-						$('#feed-' + data.id + ' .no-location').removeClass('hidden');
-							$('#feed-' + data.id + ' .location-name').addClass('hidden');
-							$('#feed-' + data.id + ' .latitude').addClass('hidden');
-							$('#feed-' + data.id + ' .longitude').addClass('hidden');
-							$('#feed-' + data.id + ' .elevation').addClass('hidden');
-							$('#feed-' + data.id + ' .disposition').addClass('hidden');
-							$('#feed-' + data.id + ' .map').addClass('hidden');
-					}
-
-					$('#feed-' + data.id + ' .duration-hour').click(function() {
-						$('#loadingData').foundation('reveal', 'open');
-						updateFeeds(data.id, thisFeedDatastreams, '6hours', 30);
-						return false;
-					});
-
-					$('#feed-' + data.id + ' .duration-day').click(function() {
-						$('#loadingData').foundation('reveal', 'open');
-						updateFeeds(data.id, thisFeedDatastreams, '1day', 60);
-						return false;
-					});
-
-					$('#feed-' + data.id + ' .duration-week').click(function() {
-						$('#loadingData').foundation('reveal', 'open');
-						updateFeeds(data.id, thisFeedDatastreams, '1week', 900);
-						return false;
-					});
-
-					$('#feed-' + data.id + ' .duration-month').click(function() {
-						$('#loadingData').foundation('reveal', 'open');
-						updateFeeds(data.id, thisFeedDatastreams, '1month', 1800);
-						return false;
-					});
-
-					$('#feed-' + data.id + ' .duration-90').click(function() {
-						$('#loadingData').foundation('reveal', 'open');
-						updateFeeds(data.id, thisFeedDatastreams, '90days', 10800);
-						return false;
-					});
-
-					// Handle Datastreams
-					if(dataDuration != '' && dataInterval != 0) {
-						updateFeeds(data.id, thisFeedDatastreams, dataDuration, dataInterval);
-					} else {
-						updateFeeds(data.id, thisFeedDatastreams, '6hours', 30);
-					}
-				} else {
-					// Duplicate Example to Build Feed UI
-					$('#exampleFeedNotFound').clone().appendTo('#feeds').attr('id', 'feed-' + id).removeClass('hidden');
-					$('#feed-' + id + ' h2').html(id);
-				}
-			});
-		});
-	}
-// END Function Declarations
-
-// BEGIN Initialization
-	if(hideForm == 1) {
-		$('#form').hide();
-	}
-
-	var today = new Date();
-	var yesterday = new Date(today.getTime()-1000*60*60*24*1);
-	var lastWeek = new Date(today.getTime()-1000*60*60*24*7);
-
-	var key = getParam('key');
-	var feedString = getParam('feeds');
-
-	// Check for Default Values
-	if(key == '' && defaultKey != '') {
-		key = defaultKey;
-	}
-
-	if(feedString == '' && defaultFeeds.toString(',') != '') {
-		feedString = defaultFeeds.toString(',');
-	}
-
-	if(applicationName != '') {
-		$('h1').html(applicationName).css('color', 'white');
-		document.title = applicationName + ' - Powered by Xively';
-	}
-
-	if(dataColor == '') {
-		dataColor = '0A1922';
-	}
-
-	var feeds = feedString.split(',');
-
-	$('#apiKeyInput').val(key);
-	$('#feedsInput').val(feedString);
-
-	$("#apiKeyInput").mouseover(function() {
-		console.log($("#apiKeyInput").prop('disabled'));
-		if($("#apiKeyInput").prop('disabled')) {
-			$("#apiKeyInput").prop('disabled', false);
-		}
-	});
-
-	if(key != '' && feedString != '') {
-		setApiKey($('#apiKeyInput').val());
-		feeds = $('#feedsInput').val().replace(/\s+/g, '').split(',');
-		setFeeds(feeds);
-	}
-
-	if(key != '') {
-		$("#apiKeyInput").prop('disabled', true);
-	}
-
-	$('#apiKeyInput').change(function() {
-		if($('#apiKeyInput').val() == '') {
-			$('#welcome').addClass('hidden');
-			$('#invalidApiKey').removeClass('hidden');
-			$('#validApiKey').addClass('hidden');
-		} else {
-			xively.setKey($('#apiKeyInput').val());
-			xively.feed.get(61916, function(data) {
-				if(data.id == 61916) {
-					$("#apiKeyInput").prop('disabled', true);
-					$('#welcome').addClass('hidden');
-					$('#validApiKey').removeClass('hidden');
-					$('#invalidApiKey').addClass('hidden');
-				} else {
-					$('#welcome').addClass('hidden');
-					$('#validApiKey').addClass('hidden');
-					$('#invalidApiKey').removeClass('hidden');
-				}
-			});
-		}
-		return false;
-	});
-
-	$('#setFeeds').click(function() {
-		setApiKey($('#apiKeyInput').val());
-		feeds = $('#feedsInput').val().replace(/\s+/g, '').split(',');
-		window.location = './index.html#key=' + $('#apiKeyInput').val() + '&feeds=' + $('#feedsInput').val();
-		return false;
-	});
-// END Initialization
-
-})( jQuery );
+</script>

@@ -16,9 +16,9 @@
 		defaultFeeds	= [3368415], // Comma separated array of Xively Feed ID numbers
 		applicationName	= 'SANTA ENGRACIA XIVELY', // Replaces Xively logo in the header
 		dataDuration	= '1day', // Default duration of data to be displayed // ref: https://xively.com/dev/docs/api/data/read/historical_data/
-		dataInterval	= 3600, // Default interval for data to be displayed (in seconds)
+		dataInterval	= 300, // Default interval for data to be displayed (in seconds)
 		dataColor		= 'f41d1d', // CSS HEX value of color to represent data (omit leading #)
-		hideForm		= 1; // To hide input form use value of 1, otherwise set to 0
+		hideForm		= 0; // To hide input form use value of 1, otherwise set to 0
 
 // Function Declarations
 

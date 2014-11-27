@@ -1,17 +1,5 @@
 (function ( $ ){
 
-	/*
-	EXAMPLE CONFIGURATION
-
-		var defaultKey	= 'fje329iun52ngtuijo2f4jeun432A', // Unique master Xively API key to be used as a default
-		defaultFeeds	= [61916,12425,94322], // Comma separated array of Xively Feed ID numbers
-		applicationName	= 'My Company\'s Application', // Replaces Xively logo in the header
-		dataDuration	= '90days', // Default duration of data to be displayed // ref: https://xively.com/dev/docs/api/data/read/historical_data/
-		dataInterval	= 10800, // Default interval for data to be displayed (in seconds)
-		dataColor		= '0A1922', // CSS HEX value of color to represent data (omit leading #)
-		hideForm		= 0;
-	*/
-
 	var defaultKey		= 'OMCzabPFgxwth38NaNLqwgpOPSfj0CIllfjzVynlhgj8FDeE', // Unique master Xively API key to be used as a default
 		defaultFeeds	= [3368415], // Comma separated array of Xively Feed ID numbers
 		applicationName	= 'SANTA ENGRACIA XIVELY', // Replaces Xively logo in the header
@@ -161,8 +149,8 @@
 											{
 											name="Ebro25",
 											data:[{x:1,y:4},{x:3,y:6}],
-											color:831616,
-											},
+											color:3ab642,
+											}
 											]											]
 									});
 

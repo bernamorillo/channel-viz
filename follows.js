@@ -157,7 +157,13 @@
 											bottom: 0.02,
 											left: 0.02
 										},
-										series: series
+										series: [
+											{
+											name=Ebro25,
+											data:[{x:1,y:4},{x:3,y:6})],
+											color:831616,
+											},
+											]											]
 									});
 
 									graph.render();

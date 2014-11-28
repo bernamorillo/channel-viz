@@ -66,8 +66,8 @@
 					});
 				}
 				feedData.datastreams.forEach(function(datastream) {
-					var now = new Date();
-					var then = new Date();
+					var now = new Date("October 13, 2014 00:00:00");
+					var then = new Date("October 14, 2014 00:00:00");
 					var updated = new Date;
 					updated = updated.parseISO(datastream.at);
 					var diff = null;
@@ -363,8 +363,7 @@
 		$('#form').hide();
 	}
 
-	//var today = new Date("October 13, 2014 00:00:00");
-	var today = new Date(1407628800);
+	var today = new Date("October 13, 2014 00:00:00");
 	var yesterday = new Date(today.getTime()-1000*60*60*24*1);
 	var lastWeek = new Date(today.getTime()-1000*60*60*24*7);
 

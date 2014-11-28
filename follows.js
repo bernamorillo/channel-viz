@@ -78,7 +78,7 @@
 					 if(duration == '90days') diff = 7884000000;
 					 
 					 
-					 then.setTime((Dec 31, 2013 0:00:00 AM) - diff);
+					 then.setTime(1407628800 - diff);
 					 
 					 
 					//then.setTime(now.getTime() - diff);

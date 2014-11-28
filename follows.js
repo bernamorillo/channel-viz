@@ -1,7 +1,7 @@
 (function ( $ ){
 
 	var defaultKey		= 'OMCzabPFgxwth38NaNLqwgpOPSfj0CIllfjzVynlhgj8FDeE', // Unique master Xively API key to be used as a default
-		defaultFeeds	= [3368415], // Comma separated array of Xively Feed ID numbers
+		defaultFeeds	= [3368415!V1-Temperatura], // Comma separated array of Xively Feed ID numbers
 		applicationName	= 'Santa Engracia Xively', // Replaces Xively logo in the header
 		dataDuration	= '1day', // Default duration of data to be displayed // ref: https://xively.com/dev/docs/api/data/read/historical_data/
 		dataInterval	= 60, // Default interval for data to be displayed (in seconds)
@@ -77,11 +77,11 @@
 					 if(duration == '1month') diff = 2628000000;
 					 if(duration == '90days') diff = 7884000000;
 					 
-					 
 					 then.setTime(1407628800 - diff);
 					 
 					 
 					//then.setTime(now.getTime() - diff);
+					
 					if(updated.getTime() > then.getTime()) {
 						if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {
 							xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {

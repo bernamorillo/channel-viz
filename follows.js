@@ -66,9 +66,9 @@
 					});
 				}
 				feedData.datastreams.forEach(function(datastream) {
-					var now = new Date("October 13, 2014 11:13:00");
-					var then = new Date("October 13, 2014 11:13:00");
-					var updated = new Date("October 13, 2014 11:13:00");
+					var now = new Date();
+					var then = new Date();
+					var updated = new Date;
 					updated = updated.parseISO(datastream.at);
 					var diff = null;
 					if(duration == '6hours') diff = 21600000;

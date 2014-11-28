@@ -66,7 +66,7 @@
 					});
 				}
 				feedData.datastreams.forEach(function(datastream) {
-					var now = new Date();
+					var now = new Date(1407628800);
 					var then = new Date();
 					var updated = new Date;
 					updated = updated.parseISO(datastream.at);

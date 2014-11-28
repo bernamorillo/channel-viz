@@ -66,9 +66,12 @@
 					});
 				}
 				feedData.datastreams.forEach(function(datastream) {
-					var now = new Date();
-					var then = new Date();
-					var updated = new Date;
+					var now = 1407628800;
+					var then = 1407628800;
+					var updated = 1407628800;
+					//var now = new Date();
+					//var then = new Date();
+					//var updated = new Date;
 					updated = updated.parseISO(datastream.at);
 					var diff = null;
 					if(duration == '6hours') diff = 21600000;

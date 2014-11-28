@@ -78,11 +78,11 @@
 					 if(duration == '90days') diff = 7884000000;
 					 
 					then.setTime(now.getTime() - diff);
-					xively.datastream.history(feedId, datastream.id, {start: 2014-05-20T00:00:00Z, duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
+					xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
 			
-					//if(updated.getTime() > then.getTime()) {
-					//	if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {
-							//xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
+					if(updated.getTime() > then.getTime()) {
+						if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {
+							xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
 								var series = [];
 								var points = [];
 

@@ -1,7 +1,7 @@
 (function ( $ ){
 
 	var defaultKey		= 'OMCzabPFgxwth38NaNLqwgpOPSfj0CIllfjzVynlhgj8FDeE', // Unique master Xively API key to be used as a default
-		defaultFeeds	= [3368415!V1-Temperatura], // Comma separated array of Xively Feed ID numbers
+		defaultFeeds	= [3368415!V1-Temperatura!V2-Temperatura!V3-Temperatura!V4Temperatura], // Comma separated array of Xively Feed ID numbers
 		applicationName	= 'Santa Engracia Xively', // Replaces Xively logo in the header
 		dataDuration	= '1day', // Default duration of data to be displayed // ref: https://xively.com/dev/docs/api/data/read/historical_data/
 		dataInterval	= 60, // Default interval for data to be displayed (in seconds)

@@ -363,7 +363,7 @@
 		$('#form').hide();
 	}
 
-	var today = new Date();
+	var today = new Date("October 13, 2014 00:00:00");
 	var yesterday = new Date(today.getTime()-1000*60*60*24*1);
 	var lastWeek = new Date(today.getTime()-1000*60*60*24*7);
 

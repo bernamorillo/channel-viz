@@ -66,7 +66,7 @@
 					});
 				}
 				feedData.datastreams.forEach(function(datastream) {
-					var now = new Date("October 13, 2014 00:00:00");
+					var now = new Date();
 					var then = new Date();
 					var updated = new Date;
 					updated = updated.parseISO(datastream.at);
@@ -78,11 +78,10 @@
 					 if(duration == '90days') diff = 7884000000;
 					 
 					then.setTime(now.getTime() - diff);
-					xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
+					xively.datastream.history(feedId, datastream.id, {start: 2014-05-20T00:00:00Z, duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
 			
-					if(updated.getTime() > then.getTime()) {
-						if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {
-							xively.datastream.history(feedId, datastream.id, {start: 2014-05-20T00:00:00Z, interval: interval, limit: 1000}, function(datastreamData) {
+					//if(updated.getTime() > then.getTime()) {
+					//	if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {
 							//xively.datastream.history(feedId, datastream.id, {duration: duration, interval: interval, limit: 1000}, function(datastreamData) {
 								var series = [];
 								var points = [];

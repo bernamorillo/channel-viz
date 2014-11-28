@@ -76,7 +76,11 @@
 					 if(duration == '1week') diff = 604800000;
 					 if(duration == '1month') diff = 2628000000;
 					 if(duration == '90days') diff = 7884000000;
-					then.setTime(Aug 09 00:00:00 IST 2014);
+					 
+					 
+					 then.setTime(2014-07-04 T 0:00:00 Z- diff);
+					 
+					 
 					//then.setTime(now.getTime() - diff);
 					if(updated.getTime() > then.getTime()) {
 						if(datastreamIds && datastreamIds != '' && datastreamIds.indexOf(datastream.id) >= 0) {

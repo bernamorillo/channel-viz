@@ -35,12 +35,12 @@
 		scheme : 'munin'
 	});// Color Schemes:
 	// classic9,colorwheel,cool,munin,spectrum14,spectrum2000,spectrum2001
-	var defaultKey = '', // bztdUQPEyZUbtTTRXTRtNud4BY6HAqvpqyyLUUfxoUMM01jC
-	defaultFeeds = '', // Comma separated array of Xively Feed ID numbers
+	var defaultKey = 'OMCzabPFgxwth38NaNLqwgpOPSfj0CIllfjzVynlhgj8FDeE', // bztdUQPEyZUbtTTRXTRtNud4BY6HAqvpqyyLUUfxoUMM01jC
+	defaultFeeds = '3368415', // Comma separated array of Xively Feed ID numbers
 	interpolation = 'monotone', // linear, step-after,step-before,
 	// cardinal,monotone,basis,bundle
 	defaultName = '', // Comma separated array of Xively Feed ID numbers
-	applicationName = '', // Replaces Xively logo in the header
+	applicationName = 'SANTA ENGRACIA XIVELY', // Replaces Xively logo in the header
 	renderer = 'line', 
 	dataColor = '', // CSS HEX value of color to represent data
 	filter = '', // default filter
